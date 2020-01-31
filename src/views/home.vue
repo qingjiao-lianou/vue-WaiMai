@@ -25,7 +25,7 @@
       </van-grid>
     </div>
     <!-- 所有城市 -->
-    <div class="all_city" v-for="(item,key,index) in allCity" :key="index">
+    <!-- <div class="all_city" v-for="(item,key,index) in allCity" :key="index">
       <div class="all_city_title">{{key}}</div>
       <van-grid clickable :column-num="4">
         <van-grid-item
@@ -36,7 +36,14 @@
           to="#"
         />
       </van-grid>
-    </div>
+    </div>-->
+    <!-- ------------ -->
+    <van-index-bar :sticky-offset-top="46">
+      <div v-for="(item,key,index) in allCity" :key="index">
+        <van-index-anchor :index="key" />
+        <van-cell :title="item2.name" v-for="(item2,index2) in item" :key="index2" />
+      </div>
+    </van-index-bar>
   </div>
 </template>
 
@@ -56,14 +63,12 @@ export default {
     // this.locationCity = res.data;
     //获取热门城市
     const res2 = await getCityList("hot");
-    console.log(res2);
-    
     this.hotCity = res2.data;
     // 获取所有城市
     const res3 = await getCityList("group");
     console.log(res3);
     this.allCity = res3.data;
-  },
+  }
   // computed: {
   //   // letterSort() {
   //   //   let arr = [];
@@ -157,4 +162,10 @@ export default {
     }
   }
 }
+// /deep/  .van-index-anchor{
+//   // padding-top: 45px;
+//   // z-index:100
+//   top:46px;
+
+// }
 </style>
