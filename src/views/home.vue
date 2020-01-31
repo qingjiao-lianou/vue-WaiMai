@@ -4,7 +4,7 @@
     <!-- 头部 -->
     <div class="header">
       <div class="header_text">外卖demo</div>
-      <router-link to="#" class="header_login">登录 / 注册</router-link>
+      <router-link to="/login" class="header_login">登录 / 注册</router-link>
     </div>
     <!-- 定位城市 -->
     <van-cell-group>
@@ -51,11 +51,13 @@ export default {
     };
   },
   async mounted() {
-    //获取定位城市
-    const res = await getCityList("guess");
-    this.locationCity = res.data;
+    //获取定位城市 (接口暂时失效)
+    // const res = await getCityList("guess");
+    // this.locationCity = res.data;
     //获取热门城市
     const res2 = await getCityList("hot");
+    console.log(res2);
+    
     this.hotCity = res2.data;
     // 获取所有城市
     const res3 = await getCityList("group");
