@@ -8,3 +8,10 @@ export const getCityList = (type) => {
     })
 }
 
+// 获取验证码
+export const getAuthCode = () => {
+    return axios({
+        url:"/v1/captchas",
+        method:'post'
+    })
+}
