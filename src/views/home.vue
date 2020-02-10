@@ -1,4 +1,3 @@
-/* eslint-disable vue/no-side-effects-in-computed-properties */
 <template>
   <div class="home">
     <!-- 头部 -->
@@ -20,12 +19,13 @@
           :key="index"
           class="hot_city_item"
           :text="item.name"
-          to="#"
+          :to="{name:'city',params:{id:item.id}}"
+          @click="handleCityItem(item)"
         />
       </van-grid>
     </div>
     <!-- 所有城市 -->
-    <!-- <div class="all_city" v-for="(item,key,index) in allCity" :key="index">
+    <div class="all_city" v-for="(item,key,index) in allCity" :key="index">
       <div class="all_city_title">{{key}}</div>
       <van-grid clickable :column-num="4">
         <van-grid-item
@@ -33,17 +33,18 @@
           :key="index"
           class="all_city_item"
           :text="item.name"
-          to="#"
+          :to="{name:'city',params:{id:item.id}}"
+          @click="handleCityItem(item)"
         />
       </van-grid>
-    </div>-->
+    </div>
     <!-- ------------ -->
-    <van-index-bar :sticky-offset-top="46">
+    <!-- <van-index-bar :sticky-offset-top="46">
       <div v-for="(item,key,index) in allCity" :key="index">
         <van-index-anchor :index="key" />
         <van-cell :title="item2.name" v-for="(item2,index2) in item" :key="index2" />
       </div>
-    </van-index-bar>
+    </van-index-bar>-->
   </div>
 </template>
 
@@ -66,20 +67,14 @@ export default {
     this.hotCity = res2.data;
     // 获取所有城市
     const res3 = await getCityList("group");
-    // console.log(res3);
+    console.log(res3);
     this.allCity = res3.data;
+  },
+  methods: {
+    handleCityItem(item) {
+      this.$store.commit("setCityInfo", item);
+    }
   }
-  // computed: {
-  //   // letterSort() {
-  //   //   let arr = [];
-  //   //   let keyArr = Object.keys(this.allCity).sort();
-  //   //   let sortAllCity = {};
-  //   //   for (let i in keyArr) {
-  //   //     sortAllCity[keyArr[i]] = encodeURIComponent(this.allCity[keyArr[i]]);
-  //   //   }
-  //   //   return sortAllCity;
-  //   // }
-  // }
 };
 </script>
 

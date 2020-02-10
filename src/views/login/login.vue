@@ -20,7 +20,7 @@
     <!-- 验证码 -->
     <div class="AuthCode">
       <img class="code_img" :src="AuthCode" alt />
-      <div class="code_text">
+      <div class="code_text" @click="handleCode">
         <div class="code_text_one">看不清？</div>
         <div class="code_text_two">换一张</div>
       </div>
@@ -31,14 +31,15 @@
       <div class="hint_title">注册过的用户可凭账号密码登录</div>
     </div>
     <!-- 登录按钮 -->
-    <van-button type="primary" size="large" url="#">登录</van-button>
+    <van-button type="primary" size="large" url="#" @click="handleLogin">登录</van-button>
     <!-- 重置密码 -->
-    <router-link class="reset" to="#" >重置密码？</router-link>
+    <router-link class="reset" to="#">重置密码？</router-link>
   </div>
 </template>
 
 <script>
-import { getAuthCode } from "@/api/homeApi";
+import { getAuthCode,mobileCode } from "@/api/homeApi";
+import { Dialog } from "vant";
 
 export default {
   data() {
@@ -60,12 +61,51 @@ export default {
     handleIcon() {
       this.rightIcon = this.rightIcon === "eye-o" ? "closed-eye" : "eye-o";
       this.type = this.type === "text" ? "password" : "text";
+    },
+    // 获取验证码图片
+    async getCode() {
+      const res = await getAuthCode();
+      console.log(res);
+      
+      this.AuthCode = res.data.code;
+    },
+    // 切换验证码
+    handleCode() {
+      this.getCode();
+    },
+    // 登录
+    handleLogin() {
+      // 验证用户名
+      if (this.username === "") {
+        Dialog.alert({
+          title: "提示！",
+          message: "账号不能为空"
+        });
+        return;
+      }
+      // 验证密码
+      if (this.password === "") {
+        Dialog.alert({
+          title: "提示！",
+          message: "密码不能为空"
+        });
+        return;
+      }
+      // 验证验证码
+      if (this.captcha_code === "") {
+        Dialog.alert({
+          title: "提示！",
+          message: "验证码不能为空"
+        });
+        return;
+      }
     }
   },
-  async mounted() {
-    // 获取验证码图片
-    const res = await getAuthCode();
-    this.AuthCode = res.data.code;
+  mounted() {
+    this.getCode();
+  },
+  components: {
+    [Dialog.Component.name]: Dialog.Component
   }
 };
 </script>
@@ -125,9 +165,9 @@ export default {
   /deep/ .van-button--large {
     width: 95%;
     margin-left: 2.5%;
-    border-radius: 10px
+    border-radius: 10px;
   }
-  .reset{
+  .reset {
     font-size: 14px;
     color: #3190e8;
     float: right;
