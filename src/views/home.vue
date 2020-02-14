@@ -8,7 +8,13 @@
     <!-- 定位城市 -->
     <van-cell-group>
       <van-cell class="location_item" title="当前定位城市：" value="定位不准时，请在列表中选择" />
-      <van-cell border class="location_city" :title="locationCity.name" is-link url="#" />
+      <van-cell
+        class="location_city"
+        :title="locationCity.name"
+        is-link
+        :to="{name:'city',params:{id:locationCity.id}}"
+        @click="handleCityItem(locationCity)"
+      />
     </van-cell-group>
     <!-- 热门城市 -->
     <div class="hot_city">
@@ -59,9 +65,11 @@ export default {
     };
   },
   async mounted() {
-    //获取定位城市 (接口失效)
-    // const res = await getCityList("guess");
-    // this.locationCity = res.data;
+    // 获取定位城市 (接口失效)
+    const res = await getCityList("guess");
+    console.log(res);
+
+    this.locationCity = res.data;
     //获取热门城市
     const res2 = await getCityList("hot");
     this.hotCity = res2.data;

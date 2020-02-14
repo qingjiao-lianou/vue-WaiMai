@@ -16,7 +16,7 @@ export const getAuthCode = () => {
     })
 }
 
-// 获取商店
+// 获取商店列表
 export const getShopList = (params) => {
     return axios({
         url: "/v1/pois",
