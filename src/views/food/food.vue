@@ -1,11 +1,13 @@
 <template>
   <div class="food">
     <Head>
+      <!-- 外面首页 -->
       <div class="header" v-if="$route.path === '/food/food_home'">
         <van-icon class="food_back" name="search" @click="$router.push({name: 'search'})" />
         <div class="food_name" @click="$router.push({name: 'home'})">{{address}}</div>
         <div class="login" @click="$router.push({name: 'login'})">登录 / 注册</div>
       </div>
+      <!-- 其它页面 -->
       <div class="header" v-else>
         <van-icon class="food_back" name="arrow-left" @click="$router.go(-1)" />
         <div class="food_name" v-if="$route.path === '/food/search'">搜索</div>
