@@ -81,7 +81,6 @@ export default {
       searchHistory: [], //搜索关键字历史记录
       shopHistory: [], //商铺历史记录
       hisShow: false, //搜索历史框
-      geohash:'' // 经纬度
     };
   },
   methods: {
@@ -96,10 +95,6 @@ export default {
         city_id: id,
         keyword: this.keyword
       });
-      console.log(res);
-      // this.geohash = res.data.geohash
-      console.log(this.geohash);
-      
       this.shopList = res.data;
       if (this.shopList.length === 0) {
         this.isShow = true;
@@ -149,7 +144,9 @@ export default {
     },
     // 跳转外卖首页
     handleFood(item) {
-      this.$router.push({ name: 'food',query:{geohash:this.geohash}});
+      const { geohash } = item;
+      localStorage.setItem('geohash',JSON.stringify(geohash))
+      this.$router.push({name: 'food_home', query: { geohash } });
       this.shopHistory = JSON.parse(localStorage.getItem("shopHis")) || [];
       // 对象数组去重
       const index = JSON.stringify(this.shopHistory).indexOf(
@@ -158,7 +155,6 @@ export default {
       if (index === -1) {
         this.shopHistory.push(item);
       }
-      console.log(this.shopHistory);
       localStorage.setItem("shopHis", JSON.stringify(this.shopHistory));
     }
   },

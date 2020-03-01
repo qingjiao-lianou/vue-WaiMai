@@ -67,7 +67,7 @@ export default {
   async mounted() {
     // 获取定位城市 (接口失效)
     const res = await getCityList("guess");
-    console.log(res);
+    // console.log(res);
 
     this.locationCity = res.data;
     //获取热门城市
@@ -75,7 +75,7 @@ export default {
     this.hotCity = res2.data;
     // 获取所有城市
     const res3 = await getCityList("group");
-    console.log(res3);
+    // console.log(res3);
     this.allCity = res3.data;
   },
   methods: {
