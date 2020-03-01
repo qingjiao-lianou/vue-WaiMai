@@ -6,19 +6,11 @@
         <div class="food_name" @click="$router.push({name: 'home'})">{{address}}</div>
         <div class="login" @click="$router.push({name: 'login'})">登录 / 注册</div>
       </div>
-      <div class="header" v-else-if="$route.path === '/food/search'">
-        <van-icon class="food_back" name="arrow-left" @click="$router.go(-1)" />
-        <div class="food_name">搜索</div>
-        <div class="login"></div>
-      </div>
-      <div class="header" v-else-if="$route.path === '/food/order'">
-        <van-icon class="food_back" name="arrow-left" @click="$router.go(-1)" />
-        <div class="food_name">订单</div>
-        <div class="login"></div>
-      </div>
       <div class="header" v-else>
         <van-icon class="food_back" name="arrow-left" @click="$router.go(-1)" />
-        <div class="food_name">个人中心</div>
+        <div class="food_name" v-if="$route.path === '/food/search'">搜索</div>
+        <div class="food_name" v-else-if="$route.path === '/food/order'">订单</div>
+        <div class="food_name" v-else>个人中心</div>
         <div class="login"></div>
       </div>
     </Head>
