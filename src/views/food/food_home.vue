@@ -1,6 +1,7 @@
 <template>
   <div class="food_home">
-    <van-swipe style="height: 222px;" indicator-color='#1989fa'>
+    <!-- 菜单导航 -->
+    <van-swipe class="a" indicator-color="#1989fa">
       <van-swipe-item class="tab_marp" v-for="(item,index1) in foodTab" :key="index1">
         <router-link class="tab_marp_item" to="#" v-for="(item2,index2) in item" :key="index2">
           <img :src="imgBaseUrl + item2.image_url" alt />
@@ -8,16 +9,27 @@
         </router-link>
       </van-swipe-item>
     </van-swipe>
+    <!-- 商铺 -->
+    <div class="shops">
+      <!-- 附近商家 -->
+      <div class="nearby_shops">
+        <van-icon name="shop-collect-o" />
+        <span>附近商家</span>
+      </div>
+      <!-- 商铺列表 -->
+      <shopList></shopList>
+    </div>
   </div>
 </template>
 
 <script>
 import { getFoodCataList } from "@/api/food_api.js";
+import shopList from "@/components/shop_list.vue";
 export default {
   data() {
     return {
       foodTab: [], //分类导航
-      imgBaseUrl: "https://fuss10.elemecdn.com" //图片域名地址
+      imgBaseUrl: "https://fuss10.elemecdn.com" //导航图片域名地址
     };
   },
   mounted() {
@@ -40,8 +52,11 @@ export default {
         let temp = foodCla.slice(i * num, i * num + num);
         this.foodTab.push(JSON.parse(JSON.stringify(temp)));
       }
-      console.log(this.foodTab);
+      // console.log(this.foodTab);
     }
+  },
+  components: {
+    shopList
   }
 };
 </script>
@@ -69,10 +84,32 @@ export default {
       }
     }
   }
-  /deep/ .van-swipe__indicator{
-        width: 6px;
-        height: 6px;
-        background-color: #626466;;
+  /deep/ .van-swipe__indicator {
+    width: 6px;
+    height: 6px;
+    background-color: #626466;
+  }
+  .shops {
+    height: 100%;
+    background-color: #fff;
+    border-top: 1px solid rgb(190, 190, 190);
+    .nearby_shops {
+      height: 24px;
+      color: #b1b0b0;
+      /deep/ .van-icon {
+        font-size: 20px;
+        padding: 0 10px;
+      }
+      span {
+        font-size: 13px;
+        vertical-align: middle;
+      }
+    }
+  }
+  .a {
+    height: 222px;
+    background-color: #fff;
+    margin-bottom: 10px;
   }
 }
 </style>

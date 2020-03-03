@@ -35,7 +35,7 @@ export default {
   },
   async mounted() {
     // 获取地址信息
-    let geohash = JSON.parse(localStorage.getItem("geohash"));
+    const { geohash } = JSON.parse(localStorage.getItem("item"));
     const res = await getAddress(geohash);
     this.address = res.data.name;
   },

@@ -145,7 +145,7 @@ export default {
     // 跳转外卖首页
     handleFood(item) {
       const { geohash } = item;
-      localStorage.setItem('geohash',JSON.stringify(geohash))
+      localStorage.setItem('item',JSON.stringify(item))
       this.$router.push({name: 'food_home', query: { geohash } });
       this.shopHistory = JSON.parse(localStorage.getItem("shopHis")) || [];
       // 对象数组去重

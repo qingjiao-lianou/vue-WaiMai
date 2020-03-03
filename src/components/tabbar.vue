@@ -23,7 +23,8 @@ export default {
     };
   },
   mounted() {
-    this.geohash = JSON.parse(localStorage.getItem("geohash"));
+    const { geohash } = JSON.parse(localStorage.getItem("item"));
+    this.geohash = geohash;
   }
 };
 </script>
