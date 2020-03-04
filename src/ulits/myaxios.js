@@ -11,8 +11,6 @@ axios.interceptors.request.use(function (config) {
         forbidClick: false,
         duration: 0
     });
-    console.log(config);
-
     return config;
 }, function (error) {
     // 对请求错误做些什么

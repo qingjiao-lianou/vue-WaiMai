@@ -8,6 +8,7 @@ import foodHome from '@/views/food/food_home.vue'
 import Search from '@/views/food/search.vue'
 import User from '@/views/food/user.vue'
 import Order from '@/views/food/order.vue'
+import FoodCate from '@/views/food/food_cate.vue'
 
 Vue.use(VueRouter)
 
@@ -59,6 +60,11 @@ export default new VueRouter({
                     component: User
                 },
             ]
-        }
+        },
+        {
+            name: 'food_cate',
+            path: '/food_cate',
+            component: FoodCate
+        },
     ]
 })

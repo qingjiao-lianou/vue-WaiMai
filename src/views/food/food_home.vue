@@ -1,9 +1,14 @@
 <template>
   <div class="food_home">
     <!-- 菜单导航 -->
-    <van-swipe class="a" indicator-color="#1989fa">
+    <van-swipe class="tab" indicator-color="#1989fa">
       <van-swipe-item class="tab_marp" v-for="(item,index1) in foodTab" :key="index1">
-        <router-link class="tab_marp_item" to="#" v-for="(item2,index2) in item" :key="index2">
+        <router-link
+          class="tab_marp_item"
+          :to="{name: 'food_cate',query:{geohash,title:item2.title}}"
+          v-for="(item2,index2) in item"
+          :key="index2"
+        >
           <img :src="imgBaseUrl + item2.image_url" alt />
           <div class="iten_name">{{item2.title}}</div>
         </router-link>
@@ -28,9 +33,15 @@ import shopList from "@/components/shop_list.vue";
 export default {
   data() {
     return {
+      geohash: "", //经纬度
       foodTab: [], //分类导航
       imgBaseUrl: "https://fuss10.elemecdn.com" //导航图片域名地址
     };
+  },
+
+  created() {
+    this.geohash = this.$route.query.geohash;
+    console.log(this.geohash);
   },
   mounted() {
     this.getfoodTab();
@@ -39,7 +50,7 @@ export default {
     // 获取外卖分类导航
     async getfoodTab() {
       const res = await getFoodCataList();
-      // console.log(res);
+      console.log(res);
       let foodCla = res.data;
       //每组显示8个
       let num = 8;
@@ -64,6 +75,7 @@ export default {
 <style lang="less" scoped>
 .food_home {
   background-color: #f5f5f5;
+  padding-top: 50px;
   .tab_marp {
     display: flex;
     flex-wrap: wrap;
@@ -106,10 +118,11 @@ export default {
       }
     }
   }
-  .a {
+  .tab {
     height: 222px;
     background-color: #fff;
     margin-bottom: 10px;
+    border-bottom: 1px solid rgb(190, 190, 190);
   }
 }
 </style>

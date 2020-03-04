@@ -57,13 +57,18 @@ export default {
   opacity: 0;
 }
 .header {
+  width: 100%;
   display: flex;
   background-color: #3190e8;
   height: 50px;
-  padding: 0 10px;
+  position: fixed;
+  z-index: 99;
+  left: 0;
+  top: 0;
   .food_back {
-    flex: 1;
+    flex: 0.9;
     color: #fff;
+    text-align: center;
     line-height: 50px;
   }
   .food_name {
@@ -76,6 +81,7 @@ export default {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-left: 5px;
   }
   .login {
     flex: 1;
@@ -83,6 +89,7 @@ export default {
     font-size: 14px;
     text-align: center;
     line-height: 50px;
+    margin-right:5px;
   }
 }
 </style>

@@ -31,7 +31,7 @@
       </div>
     </div>
     <!-- 底线 -->
-    <div v-if="shopQuery.offset === shopQuery.length" class="base_line">-----我是有底线的------</div>
+    <div class="base_line">正在加载更多..</div>
   </div>
 </template>
 

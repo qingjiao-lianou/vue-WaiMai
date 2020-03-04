@@ -21,3 +21,11 @@ export const getShopList = (params) => {
         params
     })
 };
+
+// 获取商店分类列表
+export const getShopCate = (params) => {
+    return axios({
+        url: "/shopping/v2/restaurant/category",
+        params 
+    })
+}
