@@ -37,6 +37,7 @@
 
 <script>
 import { getShopList } from "@/api/food_api.js";
+
 export default {
   data() {
     return {
@@ -57,8 +58,8 @@ export default {
     };
   },
   mounted() {
-     this.getShops();
-   
+    this.getShops();
+
     this.scrollEvent();
   },
   methods: {
@@ -69,6 +70,7 @@ export default {
       let temp = geohash.split(",");
       this.shopQuery.latitude = temp[0];
       this.shopQuery.longitude = temp[1];
+  
       const res = await getShopList(this.shopQuery);
       let arr = this.shopList;
       this.shopList = res.data;
@@ -91,7 +93,7 @@ export default {
           document.documentElement.scrollHeight || document.body.scrollHeight;
         //滚动条到底部的条件(距底部20px时触发加载)//滚动条到底部的条件
         if (scrollTop + windowHeight >= scrollHeight - 1) {
-           this.shopQuery.offset += 10;
+          this.shopQuery.offset += 10;
           this.getShops();
         }
       };
