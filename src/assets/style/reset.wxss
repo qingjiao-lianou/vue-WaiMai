@@ -106,7 +106,8 @@ body {
   line-height: 1;
 }
 ol,
-ul {
+ul,
+li {
   list-style: none;
 }
 blockquote,
@@ -123,30 +124,4 @@ q:after {
 table {
   border-collapse: collapse;
   border-spacing: 0;
-}
-.fl {
-  float: left;
-}
-.fr {
-  float: right;
-}
-.clearfix:after {
-  content: "";
-  display: block;
-  clear: both;
-}
-.clearfix {
-  zoom: 1;
-}
-a,
-a:focus,
-a:hover {
-  cursor: pointer;
-  color: inherit;
-  text-decoration: none;
-}
-html,
-body,
-#app {
-  height: 100%;
 }

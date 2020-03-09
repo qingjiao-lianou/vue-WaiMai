@@ -26,6 +26,22 @@ export const getShopList = (params) => {
 export const getShopCate = (params) => {
     return axios({
         url: "/shopping/v2/restaurant/category",
-        params 
+        params
     })
 }
+
+// 获取配送方式
+export const getModeWay = (params) => {
+    return axios({
+        url:'/shopping/v1/restaurants/delivery_modes',
+        params
+    })
+};
+
+// 商家属性列表
+export const shopsPropList = (params) => {
+    return axios({
+        url:'/shopping/v1/restaurants/activity_attributes',
+        params
+    })
+};

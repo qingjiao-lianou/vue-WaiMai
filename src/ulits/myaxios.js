@@ -11,6 +11,7 @@ axios.interceptors.request.use(function (config) {
         forbidClick: false,
         duration: 0
     });
+    // <van-skeleton title :row="3" />
     return config;
 }, function (error) {
     // 对请求错误做些什么

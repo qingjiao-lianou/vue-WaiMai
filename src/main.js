@@ -6,6 +6,8 @@ import Vant from 'vant'
 import 'vant/lib/index.css'
 import 'amfe-flexible'
 import store from '@/store/city.js'
+import VueScroller from 'vue-scroller'
+Vue.use(VueScroller)
 
 Vue.use(Vant);
 Vue.config.productionTip = false
