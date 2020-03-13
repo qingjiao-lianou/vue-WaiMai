@@ -11,7 +11,12 @@
     <!-- 筛选栏 -->
     <van-dropdown-menu class="cate_filt" :close-on-click-outside="false">
       <!-- 分类 -->
-      <van-dropdown-item :title="cateTitle" ref="cates" @open="handleOpen" @close="handleClose">
+      <van-dropdown-item
+        :title="cateTitle"
+        ref="cates"
+        @open="cateTitle = '分类'"
+        @close="cateTitle=rightCurrentIndex !== null?rightCateList[rightCurrentIndex].name:title"
+      >
         <div class="shop_cates">
           <scroller width="50%">
             <div class="shop_cates_left">
@@ -46,20 +51,29 @@
         </div>
       </van-dropdown-item>
       <!-- 排序 -->
-      <van-dropdown-item v-model="value" title="排序" :options="option" />
+      <van-dropdown-item v-model="value" title="排序" :options="option" @change="sortId = value" />
       <!-- 筛选 -->
       <van-dropdown-item title="筛选" ref="item">
         <div class="mode_way">配送方式</div>
-        <div class="mode_way_item" v-for="item in modeWay" :key="item.id">
-          <!-- <van-icon v-show="false" class="way_item_icon" name="success" color="#1989fa" size="15" /> -->
+        <div
+          class="mode_way_item"
+          v-for="item in modeWay"
+          :key="item.id"
+          :class="[item.__v?'active3':'']"
+          @click="sortWay(item)"
+        >
           <van-icon class="way_item_icon" name="logistics" size="15" />
           <div class="way_item_name">{{item.text}}</div>
         </div>
         <div class="mode_way">商家属性（可以多选）</div>
         <div class="mode_way_warp">
-          <div class="mode_way_item" v-for="item in shopsProps" :key="item.id">
-            <!-- <van-icon v-show="false" class="way_item_icon" name="success" color="#1989fa" size="15" /> -->
-            <!-- <van-icon class="way_item_icon" name="logistics" size="15" /> -->
+          <div
+            class="mode_way_item"
+            :class="[item.__v?'active3':'']"
+            v-for="item in shopsProps"
+            :key="item.id"
+            @click="sortWay(item)"
+          >
             <div
               class="way_item_tag"
               :style="{color: '#' + item.icon_color, borderColor: '#' + item.icon_color}"
@@ -68,15 +82,18 @@
           </div>
         </div>
         <div class="confirm">
-          <van-button round type="default">重置</van-button>
-          <van-button round type="primary">确定</van-button>
+          <van-button round type="default" @click="reset">重置</van-button>
+          <van-button round type="primary" @click="handleConfirm">
+            确定
+            <span v-if="optionNum">({{optionNum}})</span>
+          </van-button>
         </div>
       </van-dropdown-item>
     </van-dropdown-menu>
     <!-- 筛选内容 -->
 
     <!-- 商铺列表 -->
-    <shopList class="shop_list"></shopList>
+    <shopList class="shop_list" :ShopCateId="ShopCateId" :sortId="sortId" :supportIds="supportIds"></shopList>
   </div>
 </template>
 
@@ -87,6 +104,11 @@ import { getShopCate, getModeWay, shopsPropList } from "@/api/food_api";
 export default {
   data() {
     return {
+      optionNum: null, //筛选的个数
+      modeWayId: [], //配送id
+      supportIds: [], //传给子组件的商铺属性id
+      sortId: "", //传给子组件的排序id
+      ShopCateId: "", //传给子组件的分类id
       objIndex: {}, //点击后的左右侧索引
       modeWay: [], //配送方式
       shopsProps: [], //商品属性
@@ -99,12 +121,12 @@ export default {
       title: "", //标题
       // 排序内容
       option: [
-        { text: "智能排序", value: 0 },
-        { text: "距离最近", value: 1 },
-        { text: "销量最高", value: 2 },
-        { text: "起送价最低", value: 3 },
-        { text: "配送速度最快", value: 4 },
-        { text: "评分最高", value: 5 }
+        { text: "智能排序", value: 4, icon: "exchange" },
+        { text: "距离最近", value: 5, icon: "location-o" },
+        { text: "销量最高", value: 6, icon: "fire-o" },
+        { text: "起送价最低", value: 1, icon: "gold-coin-o" },
+        { text: "配送速度最快", value: 2, icon: "underway-o" },
+        { text: "评分最高", value: 3, icon: "star-o" }
       ]
     };
   },
@@ -113,52 +135,53 @@ export default {
     this.getData();
   },
   methods: {
-    //  点开筛选栏时触发
-    handleOpen() {
-      this.cateTitle = "分类";
-    },
-    // 关闭菜单栏时触发
-    handleClose() {
-      if (this.rightCurrentIndex !== null) {
-        //  this.rightCateList = this.cateList[this.currentIndex].sub_categories;
-        this.cateTitle = this.rightCateList[this.rightCurrentIndex].name;
-      } else {
-        this.cateTitle = this.title;
-      }
-    },
     // 点击左侧分类时触发
     handleCateItem(index) {
       this.currentIndex = index;
       this.rightCateList = this.cateList[index].sub_categories;
-      // this.rightCurrentIndex = null;
-      if (this.currentIndex !== this.objIndex.left) {
-        this.rightCurrentIndex = null;
-      } else {
-        this.rightCurrentIndex = this.objIndex.right;
-      }
+      this.rightCurrentIndex = this.currentIndex !== this.objIndex.left ? null : this.objIndex.right;
     },
     // 点击右侧分类触发
     handleRightCate(item, index) {
       this.rightCurrentIndex = index;
-      this.cateTitle = item.name;
-      this.title = item.name;
+      this.cateTitle = this.title = item.name;
+      this.ShopCateId = item.id;
       this.$refs.cates.toggle(false);
       this.objIndex.left = this.currentIndex;
       this.objIndex.right = this.rightCurrentIndex;
     },
-    // 获取数据
+    // 点击配送筛选
+    sortWay(item) {
+      item.__v = !item.__v;
+      item.__v ? this.optionNum++ : this.optionNum--;
+    },
+    // 点击重置按钮触发
+    reset() {
+      this.shopsProps.forEach(v => {
+        v.__v = 0;
+      });
+      this.modeWay[0].__v = 0;
+      this.optionNum = null;
+    },
+    // 点击确定按钮触发
+    handleConfirm() {
+      let supportIds = this.disArr(this.shopsProps, this.supportIds);
+      let modeIds = this.disArr(this.modeWay, this.modeWayId);
+      this.supportIds = [modeIds, supportIds];
+      this.$refs.item.toggle(false);
+    },
+    // 获取所有分类数据
     async getData() {
       const { title, geohash } = this.$route.query;
-      this.title = title;
-      this.cateTitle = title;
+      this.cateTitle = this.title = title;
       const res = await getShopCate();
-      console.log(res);
+      // console.log(res);
       this.cateList = res.data;
       this.rightCateList = this.cateList[0].sub_categories;
       const res2 = await getModeWay(geohash);
       this.modeWay = res2.data;
       const res3 = await shopsPropList(geohash);
-      console.log(res3);
+      // console.log(res3);
       this.shopsProps = await res3.data;
     },
     // 图片加工
@@ -172,15 +195,19 @@ export default {
       } else {
         suffix = ".png";
       }
-      let url =
-        "/" +
-        path.substr(0, 1) +
-        "/" +
-        path.substr(1, 2) +
-        "/" +
-        path.substr(3) +
-        suffix;
+      let url = "/" + path.substr(0, 1) + "/" + path.substr(1, 2) + "/" + path.substr(3) + suffix;
       return "https://fuss10.elemecdn.com" + url;
+    },
+    //处理数组
+    disArr(a, b) {
+      b.length = 0;
+      a.forEach(v => {
+        if (v.__v) {
+          b.push(v.id);
+          [...new Set(b)];
+        }
+      });
+      return b;
     }
   },
 
@@ -292,6 +319,7 @@ export default {
       margin-bottom: 5px;
       padding: 5px;
       border-radius: 5%;
+
       .way_item_tag {
         height: 16px;
         width: 16px;
@@ -355,12 +383,13 @@ export default {
   .active2 {
     color: rgb(69, 126, 231);
     .item_count {
-      // position: absolute;
-      // margin-left: 135px;
       color: #fff;
       border-color: rgb(69, 126, 231);
       background-color: rgb(69, 126, 231);
     }
+  }
+  .active3 {
+    background-color: rgb(172, 201, 255);
   }
 }
 </style>

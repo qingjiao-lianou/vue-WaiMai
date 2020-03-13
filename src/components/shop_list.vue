@@ -2,7 +2,10 @@
   <!-- 商铺列表 -->
   <div class="shop_list">
     <div class="shop_item" v-for="(item,index) in shopList" :key="index">
-      <img :src="imgBaseUrl1 + item.image_path" alt />
+      <img
+        :src="imgBaseUrl1 + item.image_path"
+        onerror="javascript:this.src='https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1584111989342&di=b1310e1b675a986da63d2b65705a3df0&imgtype=0&src=http%3A%2F%2Fi-1.shouji56.com%2F2014%2F8%2F28%2Fdd41b9e1-fd62-4f93-b20f-48d476777b45.jpg'"
+      />
       <div class="item_title">
         <div class="item_name">
           <div :class="item.is_premium?'premium':''">{{item.name}}</div>
@@ -31,7 +34,8 @@
       </div>
     </div>
     <!-- 底线 -->
-    <div class="base_line">正在加载更多..</div>
+    <!-- <div class="base_line">正在加载更多..</div> -->
+    <div v-if="newArr.length === 0" class="base_line">暂无更多数据</div>
   </div>
 </template>
 
@@ -39,8 +43,10 @@
 import { getShopList } from "@/api/food_api.js";
 
 export default {
+  props: ["ShopCateId", "sortId", "supportIds"],
   data() {
     return {
+      newArr: [],
       shopList: [], //商铺列表
       imgBaseUrl1: "//elm.cangdu.org/img/", //商铺图片域名地址
       // 商铺参数
@@ -48,7 +54,7 @@ export default {
         longitude: "", //经度
         latitude: "", //纬度
         offset: 0, //跳过多少条数据
-        limit: 10, //请求数据的数量，默认20
+        limit: 10, //请求数据的数量，默认10
         restaurant_category_id: "", //餐馆分类id
         order_by: "", //排序方式id
         delivery_mode: [], //配送方式id
@@ -57,9 +63,9 @@ export default {
       }
     };
   },
+
   mounted() {
     this.getShops();
-
     this.scrollEvent();
   },
   methods: {
@@ -70,12 +76,11 @@ export default {
       let temp = geohash.split(",");
       this.shopQuery.latitude = temp[0];
       this.shopQuery.longitude = temp[1];
-  
       const res = await getShopList(this.shopQuery);
-      let arr = this.shopList;
-      this.shopList = res.data;
-      // console.log(this.shopList);
-      this.shopList = [...arr, ...this.shopList];
+      console.log(res);
+      let oldArr = this.shopList;
+      this.newArr = res.data;
+      this.shopList = [...oldArr, ...this.newArr];
     },
     // 下滑触底
     scrollEvent() {
@@ -85,6 +90,8 @@ export default {
         //变量scrollTop是滚动条滚动时，距离顶部的距离
         var scrollTop =
           document.documentElement.scrollTop || document.body.scrollTop;
+        // console.log(scrollTop);
+        // this.scrollTop = scrollTop
         //变量windowHeight是可视区的高度
         var windowHeight =
           document.documentElement.clientHeight || document.body.clientHeight;
@@ -97,6 +104,30 @@ export default {
           this.getShops();
         }
       };
+    },
+    // 数据格式化
+    formatting() {
+      this.shopList.length = 0;
+      this.shopQuery.offset = 0;
+      this.getShops();
+    }
+  },
+  watch: {
+    // 食品分类监听
+    ShopCateId() {
+      this.shopQuery.restaurant_category_ids[0] = this.ShopCateId;
+      this.formatting()
+    },
+    // 排序监听
+    sortId() {
+      this.shopQuery.order_by = this.sortId;
+      this.formatting()
+    },
+    // 筛选监听
+    supportIds() {
+      this.shopQuery.support_ids = this.supportIds[1];
+      this.shopQuery.delivery_mode = this.supportIds[0];
+       this.formatting()
     }
   }
 };
