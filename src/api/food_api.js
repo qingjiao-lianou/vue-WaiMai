@@ -42,3 +42,18 @@ export const shopsPropList = (params) => {
         params
     })
 };
+
+// 餐馆详情
+export const foodDetail = (id) => {
+    return axios({
+        url: `/shopping/restaurant/${id}`
+    })
+};
+
+// 获取食品列表
+export const getFoodList = (id) => {
+    return axios({
+        url: '/shopping/v2/menu',
+        params: { restaurant_id: id }
+    })
+};

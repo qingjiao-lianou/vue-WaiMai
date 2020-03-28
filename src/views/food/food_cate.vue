@@ -281,14 +281,9 @@ export default {
       }
       .shop_cates_right {
         .shop_cates_item {
-          // color: red;
         }
-        // position: relative;
         flex: 1;
         .item_name {
-          // flex:1;
-          // color: #797979;
-          // margin-left: 10px;
           line-height: 22px;
         }
         .item_count {

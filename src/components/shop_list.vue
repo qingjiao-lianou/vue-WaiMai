@@ -1,7 +1,12 @@
 <template>
   <!-- 商铺列表 -->
   <div class="shop_list">
-    <div class="shop_item" v-for="(item,index) in shopList" :key="index">
+    <div
+      @click="$router.push({name: 'shop_detail',query:{geohash,id:item.id}})"
+      class="shop_item"
+      v-for="(item,index) in shopList"
+      :key="index"
+    >
       <img
         :src="imgBaseUrl1 + item.image_path"
         onerror="javascript:this.src='https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1584111989342&di=b1310e1b675a986da63d2b65705a3df0&imgtype=0&src=http%3A%2F%2Fi-1.shouji56.com%2F2014%2F8%2F28%2Fdd41b9e1-fd62-4f93-b20f-48d476777b45.jpg'"
@@ -46,6 +51,7 @@ export default {
   props: ["ShopCateId", "sortId", "supportIds"],
   data() {
     return {
+      geohash: '',
       newArr: [],
       shopList: [], //商铺列表
       imgBaseUrl1: "//elm.cangdu.org/img/", //商铺图片域名地址
@@ -72,12 +78,13 @@ export default {
     // 获取商铺
     async getShops() {
       const { geohash } = JSON.parse(localStorage.getItem("item"));
+      this.geohash = geohash
       // 分割字符串
       let temp = geohash.split(",");
       this.shopQuery.latitude = temp[0];
       this.shopQuery.longitude = temp[1];
       const res = await getShopList(this.shopQuery);
-      console.log(res);
+      // console.log(res);
       let oldArr = this.shopList;
       this.newArr = res.data;
       this.shopList = [...oldArr, ...this.newArr];
@@ -127,7 +134,7 @@ export default {
     supportIds() {
       this.shopQuery.support_ids = this.supportIds[1];
       this.shopQuery.delivery_mode = this.supportIds[0];
-       this.formatting()
+      this.formatting()
     }
   }
 };
