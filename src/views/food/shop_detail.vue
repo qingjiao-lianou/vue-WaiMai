@@ -47,7 +47,7 @@
 
     <div class="food_list" v-if="tapIndex === 0">
       <!-- 左侧菜单 -->
-      <div class="menu-wrapper" ref="scroll">
+      <div class="menu-wrapper">
         <ul>
           <li
             @click="menuList(index)"
@@ -57,48 +57,52 @@
           >
             <span>{{item.name}}</span>
           </li>
+          <div class="item_height"></div>
         </ul>
       </div>
       <!-- 右侧餐饮 -->
-      <div class="foods-wrapper" ref="foodsWrapper">
-        <div class="foods_info" v-for="(item,index) in foodList" :key="index">
-          <span class="foods_title">{{item.name}}</span>
-          <span class="foods_title_info">{{item.description}}</span>
-          <div class="foods_content" v-for="(item2,index2) in item.foods" :key="index2">
-            <div class="img_wary">
-              <img
-                :src="imgBaseUrl1 + item2.image_path"
-                onerror="javascript:this.src='https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1585052692654&di=a627dfad2fa0f725ff0955c41390415d&imgtype=0&src=http%3A%2F%2Ffile.saige.com%2Fupload%2F2012%2F2012-07-31%2F2a5160ea-2ea2-4650-a9f3-2c63223e056d.jpg'"
-              />
-            </div>
-            <div class="foods_name">
-              <div class="foods_name_title">
-                <div class="foods_shop_name">{{item2.name}}</div>
-                <div
-                  :style="{color:'#'+ item2.attributes[0].icon_color}"
-                  class="foods_shop"
-                  v-if="item2.attributes[0]&&item2.attributes[0].icon_name==='招牌'"
-                >{{item2.attributes[0].icon_name}}</div>
-                <div
-                  class="foods_shop2"
-                  :style="{backgroundColor:'#'+ item2.attributes[0].icon_color}"
-                  v-else-if="item2.attributes[0]&&item2.attributes[0].icon_name==='新'"
-                >{{item2.attributes[0].icon_name}}品</div>
+      <div class="foods-wrapper">
+        <ul>
+          <div class="foods_info" v-for="(item,index) in foodList" :key="index">
+            <span class="foods_title">{{item.name}}</span>
+            <span class="foods_title_info">{{item.description}}</span>
+            <div class="foods_content" v-for="(item2,index2) in item.foods" :key="index2">
+              <div class="img_wary">
+                <img
+                  :src="imgBaseUrl1 + item2.image_path"
+                  onerror="javascript:this.src='https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1585052692654&di=a627dfad2fa0f725ff0955c41390415d&imgtype=0&src=http%3A%2F%2Ffile.saige.com%2Fupload%2F2012%2F2012-07-31%2F2a5160ea-2ea2-4650-a9f3-2c63223e056d.jpg'"
+                />
               </div>
-              <div class="foods_state">{{item2.description}}</div>
-              <div class="foods_sell_wrap">
-                <span class="foods_sell">月售{{item2.month_sales}}份</span>
-                <span class="foods_good">好评率{{item2.satisfy_rate}}%</span>
+              <div class="foods_name">
+                <div class="foods_name_title">
+                  <div class="foods_shop_name">{{item2.name}}</div>
+                  <div
+                    :style="{color:'#'+ item2.attributes[0].icon_color}"
+                    class="foods_shop"
+                    v-if="item2.attributes[0]&&item2.attributes[0].icon_name==='招牌'"
+                  >{{item2.attributes[0].icon_name}}</div>
+                  <div
+                    class="foods_shop2"
+                    :style="{backgroundColor:'#'+ item2.attributes[0].icon_color}"
+                    v-else-if="item2.attributes[0]&&item2.attributes[0].icon_name==='新'"
+                  >{{item2.attributes[0].icon_name}}品</div>
+                </div>
+                <div class="foods_state">{{item2.description}}</div>
+                <div class="foods_sell_wrap">
+                  <span class="foods_sell">月售{{item2.month_sales}}份</span>
+                  <span class="foods_good">好评率{{item2.satisfy_rate}}%</span>
+                </div>
+                <div class="foods_any" v-if="item2.activity">
+                  <span
+                    :style="{borderColor:'#' +item2.activity.icon_color,color:'#'+item2.activity.image_text_color }"
+                  >{{item2.activity.image_text}}</span>
+                </div>
+                <div class="foods_price">￥{{item2.specfoods[0].price}}起</div>
               </div>
-              <div class="foods_any" v-if="item2.activity">
-                <span
-                  :style="{borderColor:'#' +item2.activity.icon_color,color:'#'+item2.activity.image_text_color }"
-                >{{item2.activity.image_text}}</span>
-              </div>
-              <div class="foods_price">￥{{item2.specfoods[0].price}}起</div>
             </div>
           </div>
-        </div>
+          <div class="item_height"></div>
+        </ul>
       </div>
     </div>
 
@@ -107,7 +111,8 @@
 </template>
 
 <script>
-import BScroll from 'better-scroll'
+// import BScroll from 'better-scroll'
+import BScroll from '@better-scroll/core'
 import { foodDetail, getFoodList } from '@/api/food_api.js'
 
 export default {
@@ -126,14 +131,20 @@ export default {
       menuIndex: 0,//左侧菜单当前索引
     }
   },
-  async created() {
+  async mounted() {
     const { id } = this.$route.query
     const res = await foodDetail(id)
     this.shopInfo = res.data
     // console.log(this.shopInfo);
+    //  let wrapper = document.querySelector('.menu-wrapper')
+    //   new BScroll(wrapper)
     const res2 = await getFoodList(id)
     console.log(res2);
     this.foodList = res2.data
+    this.$nextTick(() => {
+      new BScroll('.menu-wrapper')
+      new BScroll('.foods-wrapper')
+    })
 
   },
 
@@ -274,8 +285,10 @@ export default {
   }
   .food_list {
     display: flex;
+    overflow: hidden;
     .menu-wrapper {
       width: 20%;
+      height: 100vh;
       ul {
         display: flex;
         flex-direction: column;
@@ -299,6 +312,7 @@ export default {
       width: 80%;
       height: 100vh;
       .foods_info {
+      
         .foods_title {
           font-size: 14px;
           font-weight: 700;
@@ -347,7 +361,8 @@ export default {
                 font-size: 10px;
                 color: #fff;
                 width: 25px;
-                left: 85px;
+                // left: 85px;
+                right: 261px;
                 text-align: center;
                 padding: 2px;
               }
@@ -388,4 +403,7 @@ export default {
   }
 }
 
+.item_height{
+  height: 150px;
+}
 </style>
