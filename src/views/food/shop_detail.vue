@@ -1,3 +1,4 @@
+/* eslint-disable vue/return-in-computed-property */
 <template>
   <div class="shop_detail">
     <!-- 标题部分 -->
@@ -45,13 +46,13 @@
       </div>
     </div>
 
-    <div class="food_list" v-if="tapIndex === 0">
+    <div class="food_list" v-show="tapIndex === 0">
       <!-- 左侧菜单 -->
       <div class="menu-wrapper">
         <ul>
           <li
             @click="menuList(index)"
-            :class="[menuIndex === index?'active2':'']"
+            :class="{active2:index === menuIndex}"
             v-for="(item,index) in foodList"
             :key="index"
           >
@@ -62,7 +63,7 @@
       </div>
       <!-- 右侧餐饮 -->
       <div class="foods-wrapper">
-        <ul>
+        <ul ref="foodUl">
           <div class="foods_info" v-for="(item,index) in foodList" :key="index">
             <span class="foods_title">{{item.name}}</span>
             <span class="foods_title_info">{{item.description}}</span>
@@ -102,11 +103,18 @@
             </div>
           </div>
           <div class="item_height"></div>
+          <!-- <div class="item_height"></div>
+          <div class="item_height"></div>
+          <div class="item_height"></div>
+          <div class="item_height"></div>
+          <div class="item_height"></div>
+          <div class="item_height"></div>
+          <div class="item_height"></div> -->
         </ul>
       </div>
     </div>
 
-    <div v-else-if="tapIndex===1">2</div>
+    <div v-show="tapIndex===1">2</div>
   </div>
 </template>
 
@@ -128,22 +136,20 @@ export default {
       styleObject: {},//背景图片
       tap: ['商品', '评价'],//导航名称
       foodList: [],//食品列表
-      menuIndex: 0,//左侧菜单当前索引
+      scrollY: '',
+      tops: [],
     }
   },
   async mounted() {
     const { id } = this.$route.query
     const res = await foodDetail(id)
     this.shopInfo = res.data
-    // console.log(this.shopInfo);
-    //  let wrapper = document.querySelector('.menu-wrapper')
-    //   new BScroll(wrapper)
     const res2 = await getFoodList(id)
     console.log(res2);
     this.foodList = res2.data
     this.$nextTick(() => {
-      new BScroll('.menu-wrapper')
-      new BScroll('.foods-wrapper')
+      this._initscrollY()
+      this._initTops()
     })
 
   },
@@ -151,10 +157,54 @@ export default {
   methods: {
     // 点击左侧菜单
     menuList(index) {
-      this.menuIndex = index
+       // 使用右侧列表滑动到对应的位置
+
+        // 得到目标位置的scrollY
+        const scrollY = this.tops[index]
+        // 立即更新scrollY(让点击的分类项成为当前分类)
+        this.scrollY = scrollY
+        // 平滑滑动右侧列表
+        this.foodScroll.scrollTo(0, -scrollY, 300)
     },
-
-
+    _initscrollY() {
+      new BScroll('.menu-wrapper',{
+        click:true,
+      })
+      this.foodScroll = new BScroll('.foods-wrapper', {
+        probeType: 3,
+      })
+      this.foodScroll.on('scroll', ({ x, y }) => {
+        this.scrollY = Math.abs(y)
+      })
+    },
+    _initTops() {
+      const tops = []
+      let top = 0
+      tops.push(top)
+      const divs = this.$refs.foodUl.getElementsByClassName('foods_info')
+      Array.prototype.slice.call(divs).forEach(div => {
+        top += div.clientHeight
+        tops.push(top)
+      })
+      this.tops = tops
+      console.log(this.tops);
+    }
+  },
+  computed: {
+    // eslint-disable-next-line vue/return-in-computed-property
+    menuIndex(){
+        // 得到条件数据
+        const {scrollY, tops} = this
+        console.log(scrollY);
+        
+        // 根据条件计算产生一个结果
+        const index = tops.findIndex((top, index) => {
+          // scrollY>=当前top && scrollY<下一个top
+          return scrollY >= top && scrollY < tops[index + 1]
+        })
+        // 返回结果
+        return index
+    }
   }
 }
 </script>
@@ -295,7 +345,7 @@ export default {
         font-size: 12px;
         color: rgb(145, 145, 145);
         li {
-          height: 50px;
+
           padding: 6px 8px;
           margin: 9px 0;
           box-sizing: border-box;
@@ -312,7 +362,6 @@ export default {
       width: 80%;
       height: 100vh;
       .foods_info {
-      
         .foods_title {
           font-size: 14px;
           font-weight: 700;
@@ -326,6 +375,7 @@ export default {
           height: 95px;
           padding: 10px;
           display: flex;
+          border-bottom: 1px solid rgb(230, 228, 228);
           .img_wary {
             flex: 1;
             padding-right: 10px;
@@ -362,7 +412,7 @@ export default {
                 color: #fff;
                 width: 25px;
                 // left: 85px;
-                right: 261px;
+                right: 261.5px;
                 text-align: center;
                 padding: 2px;
               }
@@ -403,7 +453,7 @@ export default {
   }
 }
 
-.item_height{
+.item_height {
   height: 150px;
 }
 </style>
